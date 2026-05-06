@@ -1,0 +1,19 @@
+# dune build directory
+_build/
+
+# OCaml compiled files
+*.cmi
+*.cmo
+*.cmx
+*.o
+*.a
+
+# opam files
+.opam-switch/
+
+# editor files
+*.swp
+*.swo
+
+# vscode 
+.vscode
