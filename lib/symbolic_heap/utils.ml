@@ -1,5 +1,3 @@
-open String
-
 open Terms
 
 (** A variable gets formatted according to its type:
@@ -28,7 +26,7 @@ let rec format_expr e =
   match e with
     | Ide(id) -> format_var id
     | Int(n) -> string_of_int n
-    | Binop(op, e1, e2) -> concat " " [(format_expr e1); (format_binop op); (format_expr e2)]
+    | Binop(op, e1, e2) -> String.concat " " [(format_expr e1); (format_binop op); (format_expr e2)]
 ;;
 
 (** Converts a [comp_op] to its symbolic string representation.
@@ -45,12 +43,12 @@ let format_pure_pred pure_preds =
   let format_atom pp =
     match pp with
       | TrueB -> "true"
-      | Comp (op, e1, e2) -> concat "" [(format_expr e1); (format_comp_op op); (format_expr e2)]
-      | PointsTo (e1, e2) -> concat "" [(format_expr e1); "->"; (format_expr e2)]
+      | Comp (op, e1, e2) -> String.concat "" [(format_expr e1); (format_comp_op op); (format_expr e2)]
+      | PointsToP (e1, e2) -> String.concat "" [(format_expr e1); "->"; (format_expr e2)]
   in
     match pure_preds with
       | [] -> "true"
-      | preds -> concat " & " (List.map format_atom preds)
+      | preds -> String.concat " & " (List.map format_atom preds)
 ;;
 
 (** Pretty-prints a list of spatial predicates as a string, joined with [*]. *)
@@ -58,17 +56,20 @@ let format_spat_pred spat_preds =
   let format_atom spat_pred =
     match spat_pred with
       | TrueS -> "true"
-      | PointsTo (e1, e2) -> concat "" [(format_expr e1); "->"; (format_expr e2)]
-      | Freed e -> concat "" [(format_expr e); "-/>"]
-      | List (e1, e2) -> concat "" ["ls("; (format_expr e1); ","; (format_expr e2); ")"]
+      | PointsTo (e1, e2) -> String.concat "" [(format_expr e1); "->"; (format_expr e2)]
+      | Freed e -> (format_expr e)^"-/>"
+      | List (e1, e2) -> String.concat "" ["ls("; (format_expr e1); ","; (format_expr e2); ")"]
   in
     match spat_preds with
       | [] -> "emp"
-      | preds -> concat " * " (List.map format_atom preds)
+      | preds -> String.concat " * " (List.map format_atom preds)
 ;;
 
 (** Pretty-prints a symbolic heap [sh] in the format:
-    [[pure_predicates | spatial_predicates]]. *)
+    [∃(lvars).[pure_predicates | spatial_predicates]]. *)
 let format_symb_heap sh =
-  concat " " ["["; (format_pure_pred sh.pure); "|"; (format_spat_pred sh.spatial); "]"]
+  let heap = String.concat " " ["["; (format_pure_pred sh.pure); "|"; (format_spat_pred sh.spatial); "]"] in
+  if (sh.exists = []) then heap else
+    let vars = String.concat "," (List.map (fun i -> "_v"^(string_of_int i)) sh.exists) in
+    String.concat "" ["∃("; vars; ")."; heap]
 ;;

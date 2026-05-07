@@ -45,7 +45,7 @@ type comp_op =
 type pure_pred =
   | TrueB
   | Comp of comp_op * expr * expr
-  | PointsTo of expr * expr
+  | PointsToP of expr * expr
 ;;
 
 (* SPATIAL PREDICATES *)
@@ -69,11 +69,11 @@ type spat_pred =
 (* SYMBOLIC HEAPS *)
 
 (** A symbolic heap is composed of:
-    - [exists] : a list of existentially quantified variables.
+    - [exists] : a list of existentially quantified logical variables.
     - [pure] : a list of pure predicates, combined via logical conjunction ([&]).
     - [spatial] : a list of spatial predicates, combined via separating conjunction ([*]). *)
 type symb_heap = {
-  exists: var list;
+  exists: lvar list;
   pure : pure_pred list;
   spatial : spat_pred list;
 }
