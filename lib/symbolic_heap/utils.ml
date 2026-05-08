@@ -2,8 +2,7 @@ open Terms
 
 (** A variable gets formatted according to its type:
     - [Pvar]: program variables gets formatted according to their name.
-    - [Lvar]: logical variables gets formatted as _v[i] where [i] is their unique identifier.
-*)
+    - [Lvar]: logical variables gets formatted as _v[i] where [i] is their unique identifier. *)
 let format_var x =
   match x with
     | Pvar(x) -> x
@@ -21,7 +20,7 @@ let format_binop op =
     | Mul -> "•"
 ;;
 
-(** Pretty-prints an expression. *)
+(** Pretty-prints expression [e]. *)
 let rec format_expr e =
   match e with
     | Ide(id) -> format_var id

@@ -18,10 +18,19 @@ let fresh_lvar () =
 (** A variable can be a program variable or a logical variable. *)
 type var = Pvar of pvar | Lvar of lvar ;;
 
+module VarOrd = struct
+  type t = var
+  let compare = compare
+end
+
+(** Set of variables. *)
+module VarSet = Set.Make(VarOrd)
+
 (** A binary operator:
     - [Add]: addition.
     - [Sub]: subtraction.
-    - [Mul]: multiplication. *)
+    - [Mul]: multiplication.
+    BINARY OPERATIONS HAVE NOT BEEN IMPLEMENTED YET, AVOID USING THEM. *)
 type bin_op = Add | Sub | Mul ;;
 
 (** Expressions:
