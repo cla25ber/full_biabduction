@@ -9,6 +9,12 @@ type lvar = int ;;
 (** Logical variable counter to generate fresh new ones. *)
 let logical_counter = ref 0 ;;
 
+(** Generates a new unused logical variable. *)
+let fresh_lvar () =
+  let id = !logical_counter in
+    incr logical_counter; id
+;;
+
 (** A variable can be a program variable or a logical variable. *)
 type var = Pvar of pvar | Lvar of lvar ;;
 

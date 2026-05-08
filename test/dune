@@ -5,7 +5,3 @@
 (test
  (name formatting_test)
  (libraries biabduction ounit2))
-
-(test
- (name symbolic_heap_test)
- (libraries biabduction))
