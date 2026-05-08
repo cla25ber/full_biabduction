@@ -1,7 +1,7 @@
 (test
  (name test_biabduction)
- (libraries biabduction))
+ (libraries symbolic_heap))
 
 (test
  (name formatting_test)
- (libraries biabduction ounit2))
+ (libraries symbolic_heap ounit2))

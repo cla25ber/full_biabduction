@@ -1,6 +1,6 @@
-open Biabduction.Terms
-open Biabduction.Symb_heap_ops
-open Biabduction.Utils
+open Symbolic_heap.Terms
+open Symbolic_heap.Symb_heap_ops
+open Symbolic_heap.Utils
 
 open OUnit2
 

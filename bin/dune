@@ -1,4 +1,4 @@
 (executable
  (public_name biabduction)
  (name main)
- (libraries biabduction))
+ (libraries symbolic_heap))
