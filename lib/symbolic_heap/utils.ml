@@ -1,74 +1,35 @@
 open Types
 
-(** A variable gets formatted according to its type:
-    - [Pvar]: program variables gets formatted according to their name.
-    - [Lvar]: logical variables gets formatted as _v[i] where [i] is their unique identifier. *)
-let format_var x =
-  match x with
-    | Pvar(x) -> x
-    | Lvar(v) -> "_v" ^ (string_of_int v)
+(** Substitutes every element [el1] with [el2] of the list [list]. *)
+let update list el1 el2 =
+  List.map (fun v -> if (v = el1) then el2 else el1) list
 ;;
 
-(** Converts a [bin_op] to its symbolic string representation.
-    - [Add] : "=".
-    - [Sub] : "/=".
-    - [Mul] : "•". *)
-let format_binop op =
-  match op with
-    | Add -> "+"
-    | Sub -> "-"
-    | Mul -> "•"
-;;
+(** Transforms the integer [v] into the logical variable it represents. *)
+let var_of_lvar v = Lvar(v);;
 
-(** Pretty-prints expression [e]. *)
-let rec format_expr e =
-  match e with
-    | Ide(id) -> format_var id
-    | Int(n) -> string_of_int n
-    | Binop(op, e1, e2) -> String.concat " " [(format_expr e1); (format_binop op); (format_expr e2)]
-;;
+(** Transforms the string [x] into the program variable it represents. *)
+let var_of_pvar x = Pvar(x);;
 
-(** Converts a [comp_op] to its symbolic string representation.
-    - [Eq] : "=".
-    - [Neq] : "/=". *)
-let format_comp_op op =
-    match op with
-    | Eq -> "="
-    | Neq -> "/="
-;;
-
-(** Pretty-prints a list of pure predicates as a string, joined with [&]. *)
-let format_pure_pred pure_preds =
-  let format_atom pp =
-    match pp with
-      | TrueB -> "true"
-      | Comp (op, e1, e2) -> String.concat "" [(format_expr e1); (format_comp_op op); (format_expr e2)]
-      | PointsToP (e1, e2) -> String.concat "" [(format_expr e1); "->"; (format_expr e2)]
-  in
-    match pure_preds with
-      | [] -> "true"
-      | preds -> String.concat " & " (List.map format_atom preds)
-;;
-
-(** Pretty-prints a list of spatial predicates as a string, joined with [*]. *)
-let format_spat_pred spat_preds =
-  let format_atom spat_pred =
-    match spat_pred with
-      | TrueS -> "true"
-      | PointsTo (e1, e2) -> String.concat "" [(format_expr e1); "->"; (format_expr e2)]
-      | Freed e -> (format_expr e)^"-/>"
-      | List (e1, e2) -> String.concat "" ["ls("; (format_expr e1); ","; (format_expr e2); ")"]
-  in
-    match spat_preds with
-      | [] -> "emp"
-      | preds -> String.concat " * " (List.map format_atom preds)
-;;
-
-(** Pretty-prints a symbolic heap [sh] in the format:
-    [∃(lvars).[pure_predicates | spatial_predicates]]. *)
-let format_symb_heap sh =
-  let heap = String.concat " " ["["; (format_pure_pred sh.pure); "|"; (format_spat_pred sh.spatial); "]"] in
-  if (sh.exists = []) then heap else
-    let vars = String.concat "," (List.map (fun i -> "_v"^(string_of_int i)) sh.exists) in
-    String.concat "" ["∃("; vars; ")."; heap]
+(** Compare expression [e1] with expression [e2]. The comparison is performed on terms of simplicity, 
+    an integer is considered simpler than a program variable, which is simpler than a logical variable.
+    
+    BINARY OPERATION ARE NOT IMPLEMENTED YET. *)
+let compare_expr e1 e2 =
+  match e1, e2 with
+    | Ide ide1, Ide ide2 -> (
+      match ide1, ide2 with
+        | Pvar _, Pvar _ -> 0
+        | Pvar _, Lvar _ -> 1
+        | Lvar _, Pvar _ -> -1
+        | Lvar v1, Lvar v2 -> v1 - v2
+    )
+    | Ide _, Int _ -> -1
+    | Ide _, Binop (_, _, _) -> failwith "Binary operations not implemented yet"
+    | Int _, Ide _ -> 1
+    | Int n1, Int n2 -> 0
+    | Int _, Binop (_, _, _) -> failwith "Binary operations not implemented yet"
+    | Binop (_, _, _), Ide _ -> failwith "Binary operations not implemented yet"
+    | Binop (_, _, _), Int _ -> failwith "Binary operations not implemented yet"
+    | Binop (_, _, _), Binop (_, _, _) -> failwith "Binary operations not implemented yet"
 ;;

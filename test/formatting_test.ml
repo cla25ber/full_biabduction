@@ -1,5 +1,5 @@
 open Symbolic_heap.Types
-open Symbolic_heap.Utils
+open Symbolic_heap.Formatting
 
 open OUnit2
 

@@ -1,4 +1,5 @@
 open Types
+open Utils
 
 module VarOrd = struct
   type t = var
@@ -7,12 +8,6 @@ end
 
 (** Set of variables. *)
 module VarSet = Set.Make(VarOrd)
-
-(** Transforms the integer [v] into the logical variable it represents. *)
-let var_of_lvar v = Lvar(v);;
-
-(** Transforms the string [x] into the program variable it represents. *)
-let var_of_pvar x = Pvar(x);;
 
 (** Substitutes every occurrence of [var1] with [var2] inside of expression [e]. *)
 let rec subst_var_expr var1 var2 e =
@@ -37,11 +32,6 @@ let subst_var_spat_pred var1 var2 sp =
     | PointsTo (e1, e2) -> PointsTo((subst_var_expr var1 var2 e1), (subst_var_expr var1 var2 e2))
     | Freed e -> Freed(subst_var_expr var1 var2 e)
     | List (e1, e2) -> List((subst_var_expr var1 var2 e1), (subst_var_expr var1 var2 e2))
-;;
-
-(** Substitutes every element [el1] with [el2] of the list [list]. *)
-let update list el1 el2 =
-  List.map (fun v -> if (v = el1) then el2 else el1) list
 ;;
 
 (** Alpha-renames the logical variable [lvar] in the symbolic heap [sh]. If [lvar]
