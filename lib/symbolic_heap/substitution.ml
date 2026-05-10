@@ -1,4 +1,12 @@
-open Terms
+open Types
+
+module VarOrd = struct
+  type t = var
+  let compare = compare
+end
+
+(** Set of variables. *)
+module VarSet = Set.Make(VarOrd)
 
 (** Transforms the integer [v] into the logical variable it represents. *)
 let var_of_lvar v = Lvar(v);;

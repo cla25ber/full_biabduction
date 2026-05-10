@@ -1,5 +1,4 @@
-open Symbolic_heap.Terms
-open Symbolic_heap.Symb_heap_ops
+open Symbolic_heap.Types
 open Symbolic_heap.Utils
 
 open OUnit2

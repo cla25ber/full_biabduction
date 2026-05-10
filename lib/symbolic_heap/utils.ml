@@ -1,4 +1,4 @@
-open Terms
+open Types
 
 (** A variable gets formatted according to its type:
     - [Pvar]: program variables gets formatted according to their name.

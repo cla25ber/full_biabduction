@@ -1,4 +1,4 @@
-open Terms
+open Types
 open Substitution
 
 (** Merges symbolic heaps [sh1] and [sh2] by appending their respective list of existentially

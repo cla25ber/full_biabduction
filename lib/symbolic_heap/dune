@@ -1,2 +1,3 @@
 (library
- (name symbolic_heap))
+ (name symbolic_heap)
+ (libraries unionFind))
