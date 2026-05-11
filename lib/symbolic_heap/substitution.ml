@@ -1,14 +1,6 @@
 open Types
 open Utils
 
-module VarOrd = struct
-  type t = var
-  let compare = compare
-end
-
-(** Set of variables. *)
-module VarSet = Set.Make(VarOrd)
-
 (** Substitutes every occurrence of [var1] with [var2] inside of expression [e]. *)
 let rec subst_var_expr var1 var2 e =
   match e with
@@ -39,7 +31,7 @@ let subst_var_spat_pred var1 var2 sp =
 let alpha_rename sh lvar =
   if (not (List.mem lvar sh.exists)) then sh else (
     let new_lvar = fresh_lvar() in
-      {exists = (update sh.exists lvar new_lvar); 
+      {exists = (update_list sh.exists lvar new_lvar); 
       pure = (List.map (subst_var_pure_pred (Lvar(lvar)) (Lvar(new_lvar))) sh.pure); 
       spatial = (List.map (subst_var_spat_pred (Lvar(lvar)) (Lvar(new_lvar))) sh.spatial)}
   )
@@ -87,6 +79,6 @@ let all_variables_symb_heap sh =
 (** Collects all free variables present in the symbolic heap [sh] in a set, which is then returned. *)
 let free_variables_symb_heap sh =
   let set_of_list lst = List.fold_left (fun acc x -> VarSet.add x acc) VarSet.empty lst in
-    let quantified_vars =  set_of_list (List.map var_of_lvar sh.exists) in
+    let quantified_vars =  set_of_list (List.map (fun v -> Lvar(v)) sh.exists) in
       VarSet.diff (all_variables_symb_heap sh) quantified_vars
 ;;
