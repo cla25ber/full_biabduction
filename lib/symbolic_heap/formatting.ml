@@ -25,7 +25,7 @@ let rec format_expr e =
   match e with
     | Ide(id) -> format_var id
     | Int(n) -> string_of_int n
-    | Binop(op, e1, e2) -> String.concat " " [(format_expr e1); (format_binop op); (format_expr e2)]
+    | Binop(op, e1, e2) -> String.concat " " [("("^(format_expr e1)); (format_binop op); ((format_expr e2)^")")]
 ;;
 
 (** Converts a [comp_op] to its symbolic string representation.

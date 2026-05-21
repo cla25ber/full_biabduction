@@ -6,7 +6,7 @@ let rec subst_var_expr var1 var2 e =
   match e with
     | Ide v -> if (v = var1) then Ide(var2) else Ide(v)
     | Int n -> Int(n)
-    | Binop (op, e1, e2) -> Binop(op, (subst_var_expr var1 var2 e1), (subst_var_expr var1 var2 e1))
+    | Binop (op, e1, e2) -> Binop(op, (subst_var_expr var1 var2 e1), (subst_var_expr var1 var2 e2))
 ;;
 
 (** Substitutes every occurrence of [var1] with [var2] inside of pure predicate [pp]. *)

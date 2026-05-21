@@ -2,3 +2,7 @@
 let update_list list el1 el2 =
   List.map (fun v -> if (v = el1) then el2 else el1) list
 ;;
+
+let print_list list toString =
+  String.concat ", " (List.map toString list)
+;;

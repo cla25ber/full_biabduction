@@ -50,15 +50,6 @@ type edge = {
   label : comp_op
 }
 
-(** Returns the resulting relation when merging two nodes with relations [rel1] and [rel2]. *)
-let resulting_relation rel1 rel2 =
-  match rel1, rel2 with
-    | Neq, Neq -> Some(Neq)
-    | Neq, Eq -> None
-    | Eq, Neq -> None
-    | Eq, Eq -> Some(Eq)
-;;
-
 module EdgeOrd = struct
   type t = edge
   let compare = (fun e1 e2 -> e1.node - e2.node)
@@ -83,5 +74,5 @@ type node = {
   mutable edges: EdgeSet.t
 }
 
-(** A consistency graph is an hash table from terms to the node that contains it. *)
+(** A consistency graph is an hash table from a term to the node that contains it. *)
 type graph = (term, node) Hashtbl.t ;;
