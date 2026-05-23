@@ -3,17 +3,6 @@ let update_list list el1 el2 =
   List.map (fun v -> if (v = el1) then el2 else el1) list
 ;;
 
-
-let filter_with_flag pred list =
-  List.fold_right (
-    fun x (found, acc) ->
-      if (pred x) then
-        (true, x :: acc)
-      else
-        (found, acc)
-  ) list (false, [])
-;;
-
 (** Returns the first element of the list [list] that satisfies the predicate [pred]
     together with the list without it. If no element satisfying [pred], [None] is returned.
 
@@ -50,4 +39,15 @@ let double_eliminate_first pred1 list1 pred2 list2 =
         )
       )
   in aux list1
+;;
+
+(** Applies the functions in the list [fun_list] to parameters [param1] and [param2] until one gives a result. *)
+let rec apply_until_result fun_list param1 param2 n = 
+  match fun_list with
+    | [] -> None
+    | r :: rem_rules -> (
+      match r param1 param2 with 
+        | Some res -> (print_endline (string_of_int n));Some res
+        | None -> apply_until_result rem_rules param1 param2 (n+1)
+    )
 ;;

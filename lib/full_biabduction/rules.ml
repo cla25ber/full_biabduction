@@ -9,7 +9,8 @@ type rule_result = {
 	antiframe : symb_heap;
 	refinements2 : pure_pred list;
 	heap2 : symb_heap;
-	frame : symb_heap
+	frame : symb_heap;
+  axiom : bool
 } ;;
 
 type rule = symb_heap -> symb_heap -> rule_result option ;;
@@ -23,7 +24,8 @@ let base_emp sh1 sh2 =
 				antiframe = (symbolic_heap_of_pure_preds sh2.pure);
 				refinements2 = [];
 				heap2 = empty_sh;
-				frame = (symbolic_heap_of_pure_preds sh1.pure)
+				frame = (symbolic_heap_of_pure_preds sh1.pure);
+        axiom = true
 			} in
 			Some result
 		)
@@ -42,7 +44,8 @@ let removeL sh1 sh2 =
         antiframe = empty_sh;
         refinements2 = [];
         heap2 = sh2;
-        frame = empty_sh
+        frame = empty_sh;
+        axiom = false
       } in
       Some result
 ;;
@@ -59,7 +62,8 @@ let removeR sh1 sh2 =
         antiframe = empty_sh;
         refinements2 = [];
         heap2 = {sh2 with spatial = preds};
-        frame = empty_sh
+        frame = empty_sh;
+        axiom = false
       } in
       Some result
 ;;
@@ -76,7 +80,8 @@ let freed_match sh1 sh2 =
         antiframe = empty_sh;
         refinements2 = [];
         heap2 = {sh2 with spatial = preds2};
-        frame = empty_sh
+        frame = empty_sh;
+        axiom = false
       } in
       Some result
 ;;
@@ -95,7 +100,8 @@ let pt_match sh1 sh2 =
         antiframe = equality;
         refinements2 = [];
         heap2 = add_equality {sh2 with spatial = preds2};
-        frame = equality
+        frame = equality;
+        axiom = false
       } in
       Some result
     | _ -> failwith "Unexpected beheviour in pt_match."
@@ -108,7 +114,7 @@ let ls_startL sh1 sh2 =
     | None -> None
     | Some (List (e, e1), preds1, PointsTo (_, e2), preds2) -> 
       let remaining_list_pred = List(e2, e1) in
-      let inequality = (symbolic_heap_of_pure_preds [Comp(Neq, e1, e2)]) in
+      let inequality = (symbolic_heap_of_pure_preds [Comp(Neq, e, e1)]) in
       let add_inequality = merge_symb_heap inequality in
       let result = {
         refinements1 = [PointsToP(e, e2)];
@@ -116,7 +122,8 @@ let ls_startL sh1 sh2 =
         antiframe = inequality;
         refinements2 = [];
         heap2 = add_inequality {sh2 with spatial = preds2};
-        frame = inequality
+        frame = inequality;
+        axiom = false
       } in
       Some result
     | _ -> failwith "Unexpected beheviour in ls_startL."
@@ -129,7 +136,7 @@ let ls_startR sh1 sh2 =
     | None -> None
     | Some (PointsTo (_, e1), preds1, List (e, e2), preds2) -> 
       let remaining_list_pred = List(e1, e2) in
-      let inequality = (symbolic_heap_of_pure_preds [Comp(Neq, e1, e2)]) in
+      let inequality = (symbolic_heap_of_pure_preds [Comp(Neq, e, e2)]) in
       let add_inequality = merge_symb_heap inequality in
       let result = {
         refinements1 = [];
@@ -137,7 +144,8 @@ let ls_startR sh1 sh2 =
         antiframe = inequality;
         refinements2 = [PointsToP(e, e1)];
         heap2 = add_inequality {sh2 with spatial = (remaining_list_pred :: preds2)};
-        frame = inequality
+        frame = inequality;
+        axiom = false
       } in
       Some result
     | _ -> failwith "Unexpected beheviour in ls_startR."
@@ -156,7 +164,8 @@ let ls_endL sh1 sh2 =
         antiframe = empty_sh;
         refinements2 = [];
         heap2 = {sh2 with spatial = preds2};
-        frame = empty_sh
+        frame = empty_sh;
+        axiom = false
       } in
       Some result
     | _ -> failwith "Unexpected beheviour in ls_endL."
@@ -175,7 +184,8 @@ let ls_endR sh1 sh2 =
         antiframe = empty_sh;
         refinements2 = [];
         heap2 = {sh2 with spatial = (remaining_list_pred :: preds2)};
-        frame = empty_sh
+        frame = empty_sh;
+        axiom = false
       } in
       Some result
     | _ -> failwith "Unexpected beheviour in ls_endR."
@@ -190,7 +200,8 @@ let missingL sh1 sh2 =
         antiframe = empty_sh;
         refinements2 = [];
         heap2 = sh2;
-        frame = symbolic_heap_of_spatial_preds [sp]
+        frame = symbolic_heap_of_spatial_preds [sp];
+        axiom = false
       } in
       Some result
     | [] -> None
@@ -205,8 +216,13 @@ let missingR sh1 sh2 =
         antiframe = symbolic_heap_of_spatial_preds [sp];
         refinements2 = [];
         heap2 = {sh2 with spatial = preds};
-        frame = empty_sh
+        frame = empty_sh;
+        axiom = false
       } in
       Some result
     | [] -> None
 ;;
+
+let ruleSet1:rule list = [base_emp; removeL; removeR; freed_match; pt_match; ls_startL; ls_startR; ls_endL; missingL; missingR] ;;
+
+let ruleSet2:rule list = [base_emp; removeL; removeR; freed_match; pt_match; ls_startL; ls_startR; ls_endR; missingL; missingR] ;;
