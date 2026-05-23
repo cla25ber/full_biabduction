@@ -128,8 +128,8 @@ type symb_heap = {
   spatial : spat_pred list;
 }
 
-(** The empty symbolic heap [ true | emp ]. *)
+(** The empty symbolic heap [[ true | emp ]]. *)
 let empty_sh = {exists = []; pure = []; spatial = []} ;;
 
-(** The symbolic heap with any spatial part [ true | true ]. *)
+(** The symbolic heap with any spatial part [[ true | true ]]. *)
 let true_sh = {exists = []; pure = []; spatial = [TrueS]} ;;

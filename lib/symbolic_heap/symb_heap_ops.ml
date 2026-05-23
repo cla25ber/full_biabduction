@@ -29,3 +29,92 @@ let symbolic_heap_of_pure_preds pure_preds =
 let symbolic_heap_of_spatial_preds spat_preds =
   {exists = []; pure = []; spatial = spat_preds}
 ;;
+
+(** Using pure predicates [pure_preds], it checks whether expressions [e1] and [e2] are equal. 
+
+    JUST CHECKING FOR SIMPLE EQUALITY, NEEDS TO BE UPDATED. *)
+let equal_expr pure_preds e1 e2 =
+  (e1 = e2) || (List.mem (Comp (Eq, e1, e2)) pure_preds)
+;;
+
+(** Using pure predicates [pure_preds], it checks whether spatial predicates [sp1] and [sp2] are equal. *)
+let equal_spat_pred pure_preds sp1 sp2 =
+  match sp1, sp2 with
+    | (PointsTo (e1, e2), PointsTo (e3, e4)) -> (equal_expr pure_preds e1 e3) && (equal_expr pure_preds e2 e4)
+    | (Freed e1, Freed e2) -> equal_expr pure_preds e1 e2
+    | (List (e1, e2), List (e3, e4)) -> (equal_expr pure_preds e1 e3) && (equal_expr pure_preds e2 e4)
+    | _ -> false
+;;
+
+(** Checks whether spatial predicate [sp] represents an empty heap considering the information in [pure_preds].
+    Given our current model only ls(e1,e2) with e1=e2 represent an empty heap. *)
+let empty_predicate pure_preds sp =
+		match sp with
+			| List (e1, e2) -> (equal_expr pure_preds e1 e2)
+			| _ -> false
+;;
+
+(** Checks whether spatial predicate [sp] is a [PointsTo] predicate. *)
+let is_pointsto sp =
+  match sp with
+    | PointsTo (_, _) -> true
+    | _ -> false
+;;
+
+(** Checks whether spatial predicate [sp] is a [Freed] predicate. *)
+  let is_freed sp =
+    match sp with
+      | Freed _ -> true
+      | _ -> false
+;;
+
+(** Checks whether spatial predicate [sp] is a [List] predicate. *)
+let is_list sp =
+  match sp with
+    | List (_, _) -> true
+    | _ -> false
+;;
+
+(** Returns the heap cell which spatial predicate [sp] describes. *)
+let get_heap_cell sp =
+  match sp with
+    | PointsTo (e, _) -> Some e
+    | Freed e -> Some e
+    | List (e, _) -> Some e
+    | TrueS -> None
+;;
+
+(** Returns true if spatial predicate [sp2] is a [PointsTo] predicate and describes the same heap cell
+    as spatial predicate [sp1] according to the pure predicates [pure_preds]. *)
+let same_heap_cell_pointsto pure_preds sp1 sp2 =
+  match (get_heap_cell sp1), sp2 with
+    | Some e1, PointsTo (e2, _) -> equal_expr pure_preds e1 e2
+    | _ -> false
+;;
+
+(** Returns true if spatial predicate [sp2] is a [Freed] predicate and describes the same heap cell
+    as spatial predicate [sp1] according to the pure predicates [pure_preds]. *)
+let same_heap_cell_freed pure_preds sp1 sp2 =
+  match (get_heap_cell sp1), sp2 with
+    | Some e1, Freed e2 -> equal_expr pure_preds e1 e2
+    | _ -> false
+;;
+
+(** Returns true if spatial predicate [sp2] is a [List] predicate and describes the same heap cell
+    as spatial predicate [sp1] according to the pure predicates [pure_preds]. *)
+let same_heap_cell_list pure_preds sp1 sp2 =
+  match (get_heap_cell sp1), sp2 with
+    | Some e1, List (e2, _) -> equal_expr pure_preds e1 e2
+    | _ -> false
+;;
+
+(** Using pure predicates [pure_preds], it checks whether spatial predicates [sp1] and [sp2] are equal. 
+
+    JUST CHECKING FOR SIMPLE EQUALITY, NEEDS TO BE UPDATED. *)
+let same_pred_and_heap_cell pure_preds sp1 sp2 =
+  match sp1, sp2 with
+    | (PointsTo (e1, _), PointsTo (e2, _)) -> (equal_expr pure_preds e1 e2)
+    | (Freed e1, Freed e2) -> equal_expr pure_preds e1 e2
+    | (List (e1, _), List (e2, _)) -> (equal_expr pure_preds e1 e2)
+    | _ -> false
+;;
