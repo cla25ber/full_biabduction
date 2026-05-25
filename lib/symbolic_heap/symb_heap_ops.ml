@@ -1,5 +1,6 @@
 open Types
 open Substitution
+open Consistency
 
 (** Merges symbolic heaps [sh1] and [sh2] by appending their respective list of existentially
     quantified variables, and their pure and spatial predicates, while being careful to 
@@ -28,22 +29,6 @@ let symbolic_heap_of_pure_preds pure_preds =
 (** Creates the corresponding symbolic heap from spatial predicates [spat_preds]. *)
 let symbolic_heap_of_spatial_preds spat_preds =
   {exists = []; pure = []; spatial = spat_preds}
-;;
-
-(** Using pure predicates [pure_preds], it checks whether expressions [e1] and [e2] are equal. 
-
-    JUST CHECKING FOR SIMPLE EQUALITY, NEEDS TO BE UPDATED. *)
-let equal_expr pure_preds e1 e2 =
-  (e1 = e2) || (List.mem (Comp (Eq, e1, e2)) pure_preds)
-;;
-
-(** Using pure predicates [pure_preds], it checks whether spatial predicates [sp1] and [sp2] are equal. *)
-let equal_spat_pred pure_preds sp1 sp2 =
-  match sp1, sp2 with
-    | (PointsTo (e1, e2), PointsTo (e3, e4)) -> (equal_expr pure_preds e1 e3) && (equal_expr pure_preds e2 e4)
-    | (Freed e1, Freed e2) -> equal_expr pure_preds e1 e2
-    | (List (e1, e2), List (e3, e4)) -> (equal_expr pure_preds e1 e3) && (equal_expr pure_preds e2 e4)
-    | _ -> false
 ;;
 
 (** Checks whether spatial predicate [sp] represents an empty heap considering the information in [pure_preds].
@@ -105,16 +90,5 @@ let same_heap_cell_freed pure_preds sp1 sp2 =
 let same_heap_cell_list pure_preds sp1 sp2 =
   match (get_heap_cell sp1), sp2 with
     | Some e1, List (e2, _) -> equal_expr pure_preds e1 e2
-    | _ -> false
-;;
-
-(** Using pure predicates [pure_preds], it checks whether spatial predicates [sp1] and [sp2] are equal. 
-
-    JUST CHECKING FOR SIMPLE EQUALITY, NEEDS TO BE UPDATED. *)
-let same_pred_and_heap_cell pure_preds sp1 sp2 =
-  match sp1, sp2 with
-    | (PointsTo (e1, _), PointsTo (e2, _)) -> (equal_expr pure_preds e1 e2)
-    | (Freed e1, Freed e2) -> equal_expr pure_preds e1 e2
-    | (List (e1, _), List (e2, _)) -> (equal_expr pure_preds e1 e2)
     | _ -> false
 ;;

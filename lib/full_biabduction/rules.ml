@@ -3,6 +3,14 @@ open Symbolic_heap.Substitution
 open Symbolic_heap.Symb_heap_ops
 open Symbolic_heap.Utils
 
+(** The information given by te application of a rule:
+    - [refinements1] : the refinements of the left-hand side heap found by the rule.
+    - [heap1] : the resulting left-hand side heap after the application of the rule.
+    - [antiframe] : the abduced information about the left-hand side heap.
+    - [refinements2] : the refinements of the right-hand side heap found by the rule.
+    - [heap2] : the resulting right-hand side heap after the application of the rule.
+    - [frame] : the abduced information about the right-hand side heap.
+    - [axiom] : whether the rule applied was an axiom, and thus the execution of the algorithm should end. *)
 type rule_result = {
 	refinements1 : pure_pred list;
 	heap1 : symb_heap;
@@ -13,6 +21,8 @@ type rule_result = {
   axiom : bool
 } ;;
 
+(** A rule is a function that takes two symbolic heaps and return a [rule_result] struct in the case of a
+    successfull execution, otherwise [None]. *)
 type rule = symb_heap -> symb_heap -> rule_result option ;;
 
 let base_emp sh1 sh2 =

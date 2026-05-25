@@ -4,9 +4,7 @@ let update_list list el1 el2 =
 ;;
 
 (** Returns the first element of the list [list] that satisfies the predicate [pred]
-    together with the list without it. If no element satisfying [pred], [None] is returned.
-
-  Da rendere tail recursive *)
+    together with the list without it. If no element satisfying [pred], [None] is returned. *)
 let eliminate_first pred list =
   let rec aux list' =
     match list' with
