@@ -1,4 +1,5 @@
 open Types
+open Formatting
 
 (** Using pure predicates [pure_preds], it checks whether expressions [e1] and [e2] are equal. *)
 let equal_expr pure_preds e1 e2 =
@@ -8,12 +9,12 @@ let equal_expr pure_preds e1 e2 =
       | e :: rest ->
         if (List.mem e checked) then (closure checked rest)
         else (
-          (e = e2) || 
+          if (e = e2) then true else 
           let aux pp = (
             match pp with
               | Comp(Eq, e1', e2') -> (
-                if (e1' = e && not (List.mem e2' (checked @ to_check))) then Some e2
-                else if (e2' = e && not (List.mem e1' (checked @ to_check))) then Some e1 
+                if ((e1' = e) && not (List.mem e2' (checked @ rest))) then Some e2'
+                else if ((e2' = e) && not (List.mem e1' (checked @ rest))) then Some e1'
                 else None
               )
               | _ -> None
