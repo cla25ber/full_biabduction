@@ -3,5 +3,10 @@
  (libraries symbolic_heap ounit2))
 
 (test
+ (name utils_test)
+ (libraries symbolic_heap ounit2))
+
+(test
  (name substitution_test)
  (libraries symbolic_heap ounit2))
+

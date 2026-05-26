@@ -10,8 +10,8 @@ let format_var x =
 ;;
 
 (** Converts a [bin_op] to its symbolic string representation.
-    - [Add] : "=".
-    - [Sub] : "/=".
+    - [Add] : "+".
+    - [Sub] : "-".
     - [Mul] : "•". *)
 let format_binop op =
   match op with
@@ -30,11 +30,11 @@ let rec format_expr e =
 
 (** Converts a [comp_op] to its symbolic string representation.
     - [Eq] : "=".
-    - [Neq] : "/=". *)
+    - [Neq] : "≠". *)
 let format_comp_op op =
     match op with
     | Eq -> "="
-    | Neq -> "/="
+    | Neq -> "≠"
 ;;
 
 (** Pretty-prints a list of pure predicates as a string, joined with [&]. *)
@@ -43,7 +43,7 @@ let format_pure_pred pure_preds =
     match pp with
       | TrueB -> "true"
       | Comp (op, e1, e2) -> String.concat "" [(format_expr e1); (format_comp_op op); (format_expr e2)]
-      | PointsToP (e1, e2) -> String.concat "" [(format_expr e1); "->"; (format_expr e2)]
+      | PointsToP (e1, e2) -> String.concat "" [(format_expr e1); "~"; (format_expr e2)]
   in
     match pure_preds with
       | [] -> "true"
@@ -55,8 +55,8 @@ let format_spat_pred spat_preds =
   let format_atom spat_pred =
     match spat_pred with
       | TrueS -> "true"
-      | PointsTo (e1, e2) -> String.concat "" [(format_expr e1); "->"; (format_expr e2)]
-      | Freed e -> (format_expr e)^"-/>"
+      | PointsTo (e1, e2) -> String.concat "" [(format_expr e1); "→"; (format_expr e2)]
+      | Freed e -> (format_expr e)^"↓"
       | List (e1, e2) -> String.concat "" ["ls("; (format_expr e1); ","; (format_expr e2); ")"]
   in
     match spat_preds with

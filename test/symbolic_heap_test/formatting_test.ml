@@ -36,8 +36,8 @@ let test_pure_format _ =
 
   assert_string_equal "true" (format_pure_pred []);
   assert_string_equal "true" (format_pure_pred [pp1]);
-  assert_string_equal "x/=_v1 & 2=_v0 & true" (format_pure_pred [pp3; pp2; pp1]);
-  assert_string_equal "y->2 & x/=_v1" (format_pure_pred [pp4; pp3])
+  assert_string_equal "x≠_v1 & 2=_v0 & true" (format_pure_pred [pp3; pp2; pp1]);
+  assert_string_equal "y~2 & x≠_v1" (format_pure_pred [pp4; pp3])
 ;;
 
 let test_spatial_format _ =
@@ -54,9 +54,9 @@ let test_spatial_format _ =
   let sp4 = Freed w in
 
   assert_string_equal "emp" (format_spat_pred []);
-  assert_string_equal "x->2" (format_spat_pred [sp2]);
-  assert_string_equal "ls(y,z) * w-/>" (format_spat_pred [sp3; sp4]);
-  assert_string_equal "w-/> * x->2 * true" (format_spat_pred [sp4; sp2; sp1])
+  assert_string_equal "x→2" (format_spat_pred [sp2]);
+  assert_string_equal "ls(y,z) * w↓" (format_spat_pred [sp3; sp4]);
+  assert_string_equal "w↓ * x→2 * true" (format_spat_pred [sp4; sp2; sp1])
 ;;
 
 let test_symb_heap_format _ =
@@ -93,11 +93,11 @@ let test_symb_heap_format _ =
 
   assert_string_equal "[ true | emp ]" (format_symb_heap empty_sh);
   assert_string_equal "[ true | true ]" (format_symb_heap true_sh);
-  assert_string_equal "[ 2=2 | x->5 ]" (format_symb_heap sh1);
-  assert_string_equal "[ _v0/=2 | y-/> * x->5 ]" (format_symb_heap sh2);
-  assert_string_equal "∃(_v1).[ e=f & _v1/=42 | x->6 * e->5 * y->7 ]" (format_symb_heap sh3);
-  assert_string_equal "[ 2=_v2 | w->5 * z->5 * ls(k,7) ]" (format_symb_heap sh4);
-  assert_string_equal "∃(_v0,_v1).[ x/=_v1 | _v0->5 * f-/> ]" (format_symb_heap sh5)
+  assert_string_equal "[ 2=2 | x→5 ]" (format_symb_heap sh1);
+  assert_string_equal "[ _v0≠2 | y↓ * x→5 ]" (format_symb_heap sh2);
+  assert_string_equal "∃(_v1).[ e=f & _v1≠42 | x→6 * e→5 * y→7 ]" (format_symb_heap sh3);
+  assert_string_equal "[ 2=_v2 | w→5 * z→5 * ls(k,7) ]" (format_symb_heap sh4);
+  assert_string_equal "∃(_v0,_v1).[ x≠_v1 | _v0→5 * f↓ ]" (format_symb_heap sh5)
 ;;
 
 let suite =
