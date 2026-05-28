@@ -69,7 +69,7 @@ let test_merge_heap _ =
                           pure = [Comp(Neq, v0, Int(2)); Comp(Neq, Ide(Pvar "x"), Ide(Lvar(4)))];
                           spatial = [Freed(y); PointsTo(x, Int(5)); PointsTo(Ide(Lvar(3)), Int(5)); Freed(f)]} 
                         (merge_symb_heap sh2 sh5);
-    assert_symb_heap_equal {exists = [1];
+  assert_symb_heap_equal {exists = [1];
                           pure = [Comp(Eq, e, f); Comp(Neq, v1, Int(42)); Comp(Eq, Int 2, v0)];
                           spatial = [PointsTo(x, Int(6)); PointsTo(v0, Int(5)); PointsTo(y, Int(7)); PointsTo(w, Int(5)); PointsTo(z, Int(5)); List(k, Int(7))]} 
                         (merge_symb_heap sh3 sh4);

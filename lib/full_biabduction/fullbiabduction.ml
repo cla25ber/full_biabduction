@@ -16,9 +16,22 @@ type full_biabduction_result = {
   frame : symb_heap
 }
 
+(** Formats the result of a Full BiAbduction application. *)
+let format_fullbiabduction_result (result : full_biabduction_result option) =
+  match result with
+    | None -> "Could not apply Full BiAbduction"
+    | Some res ->
+      String.concat "\n" [
+        "Left hand-side refinements: " ^ (format_pure_pred res.refinements1);
+        "Antiframe: " ^ (format_symb_heap res.antiframe);
+        "Right hand-side refinements: " ^ (format_pure_pred res.refinements2);
+        "Frame: " ^ (format_symb_heap res.frame)
+      ]
+;;
+
 (** Takes a list of rules [rules] to be applied to symbolic heaps [sh1] and [sh2], returning their
-    respective refinements, antiframe and frame in a [rule_result] struct. In case of unsuccessful
-    Full BiAbduction, [None] is returned. *)
+    respective refinements, antiframe and frame in a [full_biabduction_result] struct. In case of 
+    unsuccessful Full BiAbduction, [None] is returned. *)
 let rec full_biabduction (rules:rule list) sh1 sh2 =
   match apply_until_result rules sh1 sh2 0 with
     | None -> None
@@ -41,13 +54,4 @@ let rec full_biabduction (rules:rule list) sh1 sh2 =
               refinements2 = res.refinements2 @ abduced_facts.refinements2;
               frame = merge_symb_heap res.frame abduced_facts.frame
             } in Some result
-;;
-
-let format_fullbiabduction_result (res:full_biabduction_result) =
-  String.concat "\n" [
-    "Left hand-side refinements: " ^ (format_pure_pred res.refinements1);
-    "Antiframe: " ^ (format_symb_heap res.antiframe);
-    "Right hand-side refinements: " ^ (format_pure_pred res.refinements2);
-    "Frame: " ^ (format_symb_heap res.frame)
-  ]
 ;;

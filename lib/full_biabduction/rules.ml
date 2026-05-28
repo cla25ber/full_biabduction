@@ -1,5 +1,6 @@
 open Symbolic_heap.Types
 open Symbolic_heap.Substitution
+open Symbolic_heap.Formatting
 open Symbolic_heap.Symb_heap_ops
 open Symbolic_heap.Utils
 
@@ -20,6 +21,31 @@ type rule_result = {
 	frame : symb_heap;
   axiom : bool
 } ;;
+
+(** Formats the result of a rule. *)
+let format_rule_result (result : rule_result option) =
+  match result with
+    | None -> "Unable to apply the rule"
+    | Some res ->
+      if (res.axiom) then
+        String.concat "\n" [
+          "Axiom applied";
+          "Left hand-side refinements: " ^ (format_pure_pred res.refinements1);
+          "Antiframe: " ^ (format_symb_heap res.antiframe);
+          "Right hand-side refinements: " ^ (format_pure_pred res.refinements2);
+          "Frame: " ^ (format_symb_heap res.frame)
+        ]
+      else 
+        String.concat "\n" [
+          "Left hand-side refinements: " ^ (format_pure_pred res.refinements1);
+          "Antiframe: " ^ (format_symb_heap res.antiframe);
+          "Right hand-side refinements: " ^ (format_pure_pred res.refinements2);
+          "Frame: " ^ (format_symb_heap res.frame);
+          "";
+          "Remaining left hand-side heap: " ^ (format_symb_heap res.heap1);
+          "Remaining right hand-side heap: " ^ (format_symb_heap res.heap2)
+        ]
+;;
 
 (** A rule is a function that takes two symbolic heaps and return a [rule_result] struct in the case of a
     successfull execution, otherwise [None]. *)
