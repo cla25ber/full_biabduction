@@ -7,17 +7,18 @@ open Consistency
     alpha-rename existentially quantified variables. No consistency checks are performed on
     the resulting heap. *)
 let merge_symb_heap sh1 sh2 =
-  let renamed_heap = (
-    let rec aux lvar_list sh = (
-      match lvar_list with
-        | lv :: lv_list -> aux lv_list (if (List.mem lv sh.exists) then (alpha_rename sh lv) else sh)
-        | [] -> sh
-    ) in aux sh1.exists sh2
-  ) in 
+  let rec aux lvar_list sh = (
+    match lvar_list with
+      | lv :: lv_list -> aux lv_list (if (List.mem lv sh.exists) then (alpha_rename sh lv) else sh)
+      | [] -> sh
+  ) in
+  let sh1' = aux (free_logical_variables_symb_heap sh2) sh1 in
+  let sh2' = aux (free_logical_variables_symb_heap sh1') sh2 in
+  let renamed_heap = aux sh1'.exists sh2' in
   {
-    exists = sh1.exists @ renamed_heap.exists;
-    pure = sh1.pure @ renamed_heap.pure;
-    spatial = sh1.spatial @ renamed_heap.spatial
+    exists = sh1'.exists @ renamed_heap.exists;
+    pure = sh1'.pure @ renamed_heap.pure;
+    spatial = sh1'.spatial @ renamed_heap.spatial
   }
 ;;
 

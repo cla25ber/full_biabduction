@@ -1,6 +1,13 @@
 open Types
 open Utils
 
+(** Checks whether variable [x] is a program or a logical variable. *)
+let get_lvar x =
+  match x with
+    | Lvar n -> Some n
+    | _ -> None
+;;
+
 (** Substitutes every occurrence of [var1] with [var2] inside of expression [e]. *)
 let rec subst_var_expr var1 var2 e =
   match e with
@@ -81,4 +88,10 @@ let free_variables_symb_heap sh =
   let set_of_list lst = List.fold_left (fun acc x -> VarSet.add x acc) VarSet.empty lst in
     let quantified_vars =  set_of_list (List.map (fun v -> Lvar(v)) sh.exists) in
       VarSet.diff (all_variables_symb_heap sh) quantified_vars
+;;
+
+(** Collets all free logical variables present in the symbolic heap [sh] in a set, which is then returned. *)
+let free_logical_variables_symb_heap sh =
+  let free_vars = free_variables_symb_heap sh in
+  List.filter_map get_lvar (VarSet.elements free_vars)
 ;;

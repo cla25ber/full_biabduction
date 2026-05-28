@@ -9,3 +9,7 @@
 (test
  (name consistency_test)
  (libraries symbolic_heap ounit2))
+
+ (test
+ (name symb_heap_ops_test)
+ (libraries symbolic_heap ounit2))
