@@ -1,3 +1,7 @@
 (test
  (name rules_test)
  (libraries full_biabduction ounit2))
+
+(test
+ (name full_biabduction_test)
+ (libraries full_biabduction ounit2))
