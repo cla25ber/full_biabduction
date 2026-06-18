@@ -21,7 +21,6 @@ let subst_var_pure_pred var1 var2 pp =
   match pp with
     | TrueB -> TrueB
     | Comp (op, e1, e2) -> Comp(op, (subst_var_expr var1 var2 e1), (subst_var_expr var1 var2 e2))
-    | PointsToP (e1, e2) -> PointsToP((subst_var_expr var1 var2 e1), (subst_var_expr var1 var2 e2))
 ;;
 
 (** Substitutes every occurrence of [var1] with [var2] inside of spatial predicate [sp]. *)
@@ -63,7 +62,6 @@ let all_vars_pure_preds pure_preds =
     match pp with
       | TrueB -> VarSet.empty
       | Comp (_, e1, e2) -> VarSet.union (all_vars_expr e1) (all_vars_expr e2)
-      | PointsToP (e1, e2) -> VarSet.union (all_vars_expr e1) (all_vars_expr e2)
   in List.fold_left (fun acc pp -> VarSet.union acc (all_vars_atom_pure_pred pp)) VarSet.empty pure_preds
 ;;
 

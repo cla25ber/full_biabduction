@@ -43,7 +43,6 @@ let format_pure_pred pure_preds =
     match pp with
       | TrueB -> "true"
       | Comp (op, e1, e2) -> String.concat "" [(format_expr e1); (format_comp_op op); (format_expr e2)]
-      | PointsToP (e1, e2) -> String.concat "" [(format_expr e1); "~"; (format_expr e2)]
   in
     match pure_preds with
       | [] -> "true"

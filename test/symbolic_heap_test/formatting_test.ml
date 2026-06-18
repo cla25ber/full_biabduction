@@ -32,12 +32,11 @@ let test_pure_format _ =
   let pp1 = TrueB in
   let pp2 = Comp (Eq, e1, e3) in
   let pp3 = Comp (Neq, Ide (Pvar "x"), e4) in
-  let pp4 = PointsToP (Ide (Pvar "y"), e1) in
 
   assert_string_equal "true" (format_pure_pred []);
   assert_string_equal "true" (format_pure_pred [pp1]);
   assert_string_equal "x≠_v1 & 2=_v0 & true" (format_pure_pred [pp3; pp2; pp1]);
-  assert_string_equal "y~2 & x≠_v1" (format_pure_pred [pp4; pp3])
+  assert_string_equal "x≠_v1" (format_pure_pred [pp3])
 ;;
 
 let test_spatial_format _ =

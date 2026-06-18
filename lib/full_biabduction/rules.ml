@@ -4,6 +4,17 @@ open Symbolic_heap.Formatting
 open Symbolic_heap.Symb_heap_ops
 open Symbolic_heap.Utils
 
+(** Refinements consists in the special points-to predicate affecting only the location it speaks about. *)
+type refin = PointsToP of expr * expr ;;
+
+(** Pretty-prints a list of refinements. *)
+let format_refins refin_list =
+  let format_atom r =
+    match r with
+      | PointsToP (e1, e2) -> String.concat "" [(format_expr e1); "~"; (format_expr e2)]
+  in String.concat "" (List.map format_atom refin_list)
+;;
+
 (** The information given by te application of a rule:
     - [refinements1] : the refinements of the left-hand side heap found by the rule.
     - [heap1] : the resulting left-hand side heap after the application of the rule.
@@ -13,10 +24,10 @@ open Symbolic_heap.Utils
     - [frame] : the abduced information about the right-hand side heap.
     - [axiom] : whether the rule applied was an axiom, and thus the execution of the algorithm should end. *)
 type rule_result = {
-	refinements1 : pure_pred list;
+	refinements1 : refin list;
 	heap1 : symb_heap;
 	antiframe : symb_heap;
-	refinements2 : pure_pred list;
+	refinements2 : refin list;
 	heap2 : symb_heap;
 	frame : symb_heap;
   axiom : bool
@@ -30,16 +41,16 @@ let format_rule_result (result : rule_result option) =
       if (res.axiom) then
         String.concat "\n" [
           "Axiom applied";
-          "Left hand-side refinements: " ^ (format_pure_pred res.refinements1);
+          "Left hand-side refinements: " ^ (format_refins res.refinements1);
           "Antiframe: " ^ (format_symb_heap res.antiframe);
-          "Right hand-side refinements: " ^ (format_pure_pred res.refinements2);
+          "Right hand-side refinements: " ^ (format_refins res.refinements2);
           "Frame: " ^ (format_symb_heap res.frame)
         ]
       else 
         String.concat "\n" [
-          "Left hand-side refinements: " ^ (format_pure_pred res.refinements1);
+          "Left hand-side refinements: " ^ (format_refins res.refinements1);
           "Antiframe: " ^ (format_symb_heap res.antiframe);
-          "Right hand-side refinements: " ^ (format_pure_pred res.refinements2);
+          "Right hand-side refinements: " ^ (format_refins res.refinements2);
           "Frame: " ^ (format_symb_heap res.frame);
           "";
           "Remaining left hand-side heap: " ^ (format_symb_heap res.heap1);

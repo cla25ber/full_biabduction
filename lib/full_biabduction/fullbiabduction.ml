@@ -10,9 +10,9 @@ open Rules
     - [refinements2] : the refinements of the right-hand side heap found by the previous algorithm steps.
     - [frame] : the abduced information about the right-hand side heap. *)
 type full_biabduction_result = {
-  refinements1 : pure_pred list;
+  refinements1 : refin list;
   antiframe : symb_heap;
-  refinements2 : pure_pred list;
+  refinements2 : refin list;
   frame : symb_heap
 }
 
@@ -22,9 +22,9 @@ let format_fullbiabduction_result (result : full_biabduction_result option) =
     | None -> "Could not apply Full BiAbduction"
     | Some res ->
       String.concat "\n" [
-        "Left hand-side refinements: " ^ (format_pure_pred res.refinements1);
+        "Left hand-side refinements: " ^ (format_refins res.refinements1);
         "Antiframe: " ^ (format_symb_heap res.antiframe);
-        "Right hand-side refinements: " ^ (format_pure_pred res.refinements2);
+        "Right hand-side refinements: " ^ (format_refins res.refinements2);
         "Frame: " ^ (format_symb_heap res.frame)
       ]
 ;;

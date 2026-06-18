@@ -74,13 +74,11 @@ let test_pure_substitution _ =
   let pp1 = TrueB in
   let pp2 = Comp (Eq, e1, e3) in
   let pp3 = Comp (Neq, e5, e4) in
-  let pp4 = PointsToP (Ide y, e1) in
 
   assert_pure_equal [pp1] [subst_var_pure_pred x y pp1];
   assert_pure_equal [Comp(Eq, e1, e2)] [subst_var_pure_pred v0 x pp2];
   assert_pure_equal [pp2] [subst_var_pure_pred x y pp2];
-  assert_pure_equal [Comp (Neq, Binop(Sub, Binop(Mul, Ide(y), e3), Ide(y)), e4)] [subst_var_pure_pred x y pp3];
-  assert_pure_equal [PointsToP (Ide v1, e1)] [(subst_var_pure_pred y v1 pp4)]
+  assert_pure_equal [Comp (Neq, Binop(Sub, Binop(Mul, Ide(y), e3), Ide(y)), e4)] [subst_var_pure_pred x y pp3]
 ;;
 
 let test_spatial_substitution _ =
@@ -173,7 +171,6 @@ let test_collect_variables _ =
   let pp1 = TrueB in
   let pp2 = Comp (Eq, e1, e3) in
   let pp3 = Comp (Neq, e5, e4) in
-  let pp4 = PointsToP (Ide y, e1) in
 
   let sp1 = TrueS in
   let sp2 = PointsTo (e1, e3) in
@@ -210,8 +207,8 @@ let test_collect_variables _ =
   assert_varset_equal (VarSet.of_list []) (all_vars_pure_preds []);
   assert_varset_equal (VarSet.of_list []) (all_vars_pure_preds [pp1]);
   assert_varset_equal (VarSet.of_list [v0; x; v1]) (all_vars_pure_preds [pp2; pp3; pp2]);
-  assert_varset_equal (VarSet.of_list [v0; y]) (all_vars_pure_preds [pp4; pp2]);
-  assert_varset_equal (VarSet.of_list [v0; x; v1; y]) (all_vars_pure_preds [pp1; pp2; pp3; pp4]);
+  assert_varset_equal (VarSet.of_list [v0]) (all_vars_pure_preds [pp2]);
+  assert_varset_equal (VarSet.of_list [v0; x; v1]) (all_vars_pure_preds [pp1; pp2; pp3]);
 
   assert_varset_equal (VarSet.of_list []) (all_vars_spatial_preds []);
   assert_varset_equal (VarSet.of_list []) (all_vars_spatial_preds [sp1]);

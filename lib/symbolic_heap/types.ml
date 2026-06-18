@@ -90,12 +90,10 @@ type comp_op =
 
 (** A pure logical predicate:
     - [TrueB]: the boolean constant true.
-    - [Comp (op, e1, e2)]: comparison between expressions.
-    - [PointsTo (e1, e2)]: *)
+    - [Comp (op, e1, e2)]: comparison between expressions. *)
 type pure_pred =
   | TrueB
   | Comp of comp_op * expr * expr
-  | PointsToP of expr * expr
 ;;
 
 (* SPATIAL PREDICATES *)
