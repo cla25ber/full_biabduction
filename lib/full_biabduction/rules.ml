@@ -7,12 +7,16 @@ open Symbolic_heap.Utils
 (** Refinements consists in the special points-to predicate affecting only the location it speaks about. *)
 type refin = PointsToP of expr * expr ;;
 
-(** Pretty-prints a list of refinements. *)
+(** Pretty-prints a list of refinements as a string. *)
 let format_refins refin_list =
   let format_atom r =
     match r with
       | PointsToP (e1, e2) -> String.concat "" [(format_expr e1); "~"; (format_expr e2)]
-  in String.concat "" (List.map format_atom refin_list)
+  in String.concat " " ["["; (
+    match refin_list with
+      | [] -> "true"
+      | refins -> String.concat " & " (List.map format_atom refins)
+  ); "]"]
 ;;
 
 (** The information given by te application of a rule:
@@ -22,7 +26,8 @@ let format_refins refin_list =
     - [refinements2] : the refinements of the right-hand side heap found by the rule.
     - [heap2] : the resulting right-hand side heap after the application of the rule.
     - [frame] : the abduced information about the right-hand side heap.
-    - [axiom] : whether the rule applied was an axiom, and thus the execution of the algorithm should end. *)
+    - [axiom] : whether the rule applied was an axiom, and thus the execution of the algorithm should end.
+    - [name] : the name of the rule applied *)
 type rule_result = {
 	refinements1 : refin list;
 	heap1 : symb_heap;
@@ -30,7 +35,8 @@ type rule_result = {
 	refinements2 : refin list;
 	heap2 : symb_heap;
 	frame : symb_heap;
-  axiom : bool
+  axiom : bool;
+  name : string
 } ;;
 
 (** Formats the result of a rule. *)
@@ -40,7 +46,7 @@ let format_rule_result (result : rule_result option) =
     | Some res ->
       if (res.axiom) then
         String.concat "\n" [
-          "Axiom applied";
+          "Axiom applied: " ^ res.name;
           "Left hand-side refinements: " ^ (format_refins res.refinements1);
           "Antiframe: " ^ (format_symb_heap res.antiframe);
           "Right hand-side refinements: " ^ (format_refins res.refinements2);
@@ -48,6 +54,7 @@ let format_rule_result (result : rule_result option) =
         ]
       else 
         String.concat "\n" [
+          "Rule applied: " ^ res.name;
           "Left hand-side refinements: " ^ (format_refins res.refinements1);
           "Antiframe: " ^ (format_symb_heap res.antiframe);
           "Right hand-side refinements: " ^ (format_refins res.refinements2);
@@ -72,7 +79,8 @@ let base_emp sh1 sh2 =
 				refinements2 = [];
 				heap2 = empty_sh;
 				frame = (symbolic_heap_of_pure_preds sh1.pure);
-        axiom = true
+        axiom = true;
+        name = "base-emp"
 			} in
 			Some result
 		)
@@ -92,7 +100,8 @@ let removeL sh1 sh2 =
         refinements2 = [];
         heap2 = sh2;
         frame = empty_sh;
-        axiom = false
+        axiom = false;
+        name = "removeL"
       } in
       Some result
 ;;
@@ -110,7 +119,8 @@ let removeR sh1 sh2 =
         refinements2 = [];
         heap2 = {sh2 with spatial = preds};
         frame = empty_sh;
-        axiom = false
+        axiom = false;
+        name = "removeR"
       } in
       Some result
 ;;
@@ -128,7 +138,8 @@ let freed_match sh1 sh2 =
         refinements2 = [];
         heap2 = {sh2 with spatial = preds2};
         frame = empty_sh;
-        axiom = false
+        axiom = false;
+        name = "freed-match"
       } in
       Some result
 ;;
@@ -148,7 +159,8 @@ let pt_match sh1 sh2 =
         refinements2 = [];
         heap2 = add_equality {sh2 with spatial = preds2};
         frame = equality;
-        axiom = false
+        axiom = false;
+        name = "pointsto-match"
       } in
       Some result
     | _ -> failwith "Unexpected beheviour in pt_match."
@@ -170,7 +182,8 @@ let ls_startL sh1 sh2 =
         refinements2 = [];
         heap2 = add_inequality {sh2 with spatial = preds2};
         frame = inequality;
-        axiom = false
+        axiom = false;
+        name = "ls-startL"
       } in
       Some result
     | _ -> failwith "Unexpected beheviour in ls_startL."
@@ -192,7 +205,8 @@ let ls_startR sh1 sh2 =
         refinements2 = [PointsToP(e, e1)];
         heap2 = add_inequality {sh2 with spatial = (remaining_list_pred :: preds2)};
         frame = inequality;
-        axiom = false
+        axiom = false;
+        name = "ls-startR"
       } in
       Some result
     | _ -> failwith "Unexpected beheviour in ls_startR."
@@ -212,7 +226,8 @@ let ls_endL sh1 sh2 =
         refinements2 = [];
         heap2 = {sh2 with spatial = preds2};
         frame = empty_sh;
-        axiom = false
+        axiom = false;
+        name = "ls-endL"
       } in
       Some result
     | _ -> failwith "Unexpected beheviour in ls_endL."
@@ -232,29 +247,14 @@ let ls_endR sh1 sh2 =
         refinements2 = [];
         heap2 = {sh2 with spatial = (remaining_list_pred :: preds2)};
         frame = empty_sh;
-        axiom = false
+        axiom = false;
+        name = "ls-endR"
       } in
       Some result
     | _ -> failwith "Unexpected beheviour in ls_endR."
 ;;
 
 let missingL sh1 sh2 =
-  match sh1.spatial with
-    | sp :: preds ->
-      let result = {
-        refinements1 = [];
-        heap1 = {sh1 with spatial = preds};
-        antiframe = empty_sh;
-        refinements2 = [];
-        heap2 = sh2;
-        frame = symbolic_heap_of_spatial_preds [sp];
-        axiom = false
-      } in
-      Some result
-    | [] -> None
-;;
-
-let missingR sh1 sh2 =
   match sh2.spatial with
     | sp :: preds ->
       let result = {
@@ -264,7 +264,25 @@ let missingR sh1 sh2 =
         refinements2 = [];
         heap2 = {sh2 with spatial = preds};
         frame = empty_sh;
-        axiom = false
+        axiom = false;
+        name = "missingL"
+      } in
+      Some result
+    | [] -> None
+;;
+
+let missingR sh1 sh2 =
+  match sh1.spatial with
+    | sp :: preds ->
+      let result = {
+        refinements1 = [];
+        heap1 = {sh1 with spatial = preds};
+        antiframe = empty_sh;
+        refinements2 = [];
+        heap2 = sh2;
+        frame = symbolic_heap_of_spatial_preds [sp];
+        axiom = false;
+        name = "missingR"
       } in
       Some result
     | [] -> None

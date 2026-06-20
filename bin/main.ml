@@ -1,104 +1,85 @@
 open Symbolic_heap.Types
+open Symbolic_heap.Formatting
 open Full_biabduction.Fullbiabduction
 open Full_biabduction.Rules
 
-(*let sh1 = {
-  exists = [];
-  pure = [];
-  spatial = [PointsTo(Ide(Pvar("x")), Ide(Pvar("y"))); List(Ide(Pvar("y")), Ide(Pvar("z")))]
-} ;;
-let sh2 = {
-  exists = [];
-  pure = [];
-  spatial = [List(Ide(Pvar("x")), Ide(Pvar("y"))); PointsTo(Ide(Pvar("y")), Ide(Pvar("z")))]
-} ;;*)
-
-let sh3 = {
-  exists = [];
-  pure =[Comp(Eq, Ide(Pvar("y")), Ide(Lvar(0)))];
-  spatial = [PointsTo(Ide(Pvar("v")), Ide(Lvar(0)))]
-} ;;
-
-let sh4 = {
-  exists = [];
-  pure = [];
-  spatial = [PointsTo(Ide(Pvar("y")), Ide(Lvar(1)))]
-} ;;
-
-let sh5 = {
-  exists = [];
-  pure =[Comp(Eq, Ide(Pvar("y")), Ide(Lvar(0)))];
-  spatial = [PointsTo(Ide(Pvar("v")), Ide(Lvar(0))); Freed(Ide(Pvar("y")))]
-} ;;
-
-let sh6 = {
-  exists = [];
-  pure = [Comp(Eq, Ide(Pvar("y")), Ide(Lvar(2)))];
-  spatial = []
-} ;;
-
-let sh7 = {
-  exists = [];
-  pure =[Comp(Eq, Ide(Lvar(0)), Ide(Lvar(2)))];
-  spatial = [PointsTo(Ide(Pvar("y")), Ide(Lvar(3))); PointsTo(Ide(Pvar("v")), Ide(Lvar(0))); Freed(Ide(Lvar(2)))]
-} ;;
-
-let sh8 = {
-  exists = [];
-  pure = [];
-  spatial = [PointsTo(Ide(Pvar("v")), Ide(Lvar(4)))]
-} ;;
+let x = Ide(Pvar("x")) ;;
+let y = Ide(Pvar("y")) ;;
+let z = Ide(Pvar("z")) ;;
+let w = Ide(Pvar("w")) ;;
+let l = Ide(Lvar(fresh_lvar())) ;;
 
 
-let () = 
-  print_endline (format_fullbiabduction_result (full_biabduction ruleSet1 sh3 sh4));
-  print_endline "";
-  print_endline (format_fullbiabduction_result (full_biabduction ruleSet1 sh5 sh6));
-  print_endline "";
-  print_endline (format_fullbiabduction_result (full_biabduction ruleSet1 sh7 sh8));
+(* EXAMPLE 4.1 *)
+
+let sh1 = 
+    {exists = []; 
+    pure = []; 
+    spatial = [PointsTo(x, y); PointsTo(y, z);]}
+;;
+let sh2 = 
+  {exists = []; 
+  pure = []; 
+  spatial = [PointsTo(x, w);]} 
 ;;
 
-let sh9 = {
-  exists = [];
-  pure =[];
-  spatial = [PointsTo(Ide(Pvar("v")), Ide(Lvar(0)))]
-} ;;
 
-let sh10 = {
-  exists = [];
-  pure = [];
-  spatial = [PointsTo(Ide(Pvar("y")), Ide(Lvar(1)))]
-} ;;
+(* EXAMPLE 4.2 *)
 
-let sh11 = {
-  exists = [];
-  pure =[Comp(Eq, Ide(Pvar("y")), Ide(Lvar(100)))];
-  spatial = [PointsTo(Ide(Pvar("v")), Ide(Lvar(0)))]
-} ;;
+let sh3 = 
+    {exists = []; 
+    pure = []; 
+    spatial = [List(x, y)]}
+;;
+let sh4 = 
+  {exists = []; 
+  pure = []; 
+  spatial = [PointsTo(x, l);]} 
+;;
 
-let sh12 = {
-  exists = [];
-  pure = [];
-  spatial = [Freed(Ide(Pvar("y")))]
-} ;;
 
-let sh13 = {
-  exists = [];
-  pure =[Comp(Eq, Ide(Pvar("y")), Ide(Lvar(100)))];
-  spatial = [PointsTo(Ide(Pvar("y")), Ide(Lvar(2))); PointsTo(Ide(Pvar("v")), Ide(Lvar(0)))]
-} ;;
+(* EXAMPLE 4.3 *)
 
-let sh14 = {
-  exists = [];
-  pure = [Comp(Eq, Ide(Pvar("y")), Ide(Lvar(3)))];
-  spatial = [PointsTo(Ide(Pvar("v")), Ide(Lvar(3)))]
-} ;;
+let sh5 = 
+    {exists = []; 
+    pure = []; 
+    spatial = [PointsTo(x, y); List(y,z)]}
+;;
+let sh6 = 
+  {exists = []; 
+  pure = []; 
+  spatial = [List(x,y); PointsTo(y, z);]} 
+;;
+
+(* EXAMPLES EXECUTION *)
 
 let () = 
-  print_endline (format_fullbiabduction_result (full_biabduction ruleSet1 sh9 sh10));
+  print_endline "\nExample 4.1:";
+  print_endline "\nInput:";
+  print_endline ("   Heap1:  " ^ (format_symb_heap sh1));
+  print_endline ("   Heap2:  " ^ (format_symb_heap sh2));
+  (*print_endline (String.concat " " ["  "; (format_symb_heap sh1); "◁ ▷"; (format_symb_heap sh2)]);*)
+  print_endline "\nRules applied:";
+  print_endline (format_fullbiabduction_result (full_biabduction ~verbose:true ruleSet1 sh1 sh2));
   print_endline "";
-  print_endline (format_fullbiabduction_result (full_biabduction ruleSet1 sh11 sh12));
+
+  print_endline "\nExample 4.2:";
+  print_endline "\nInput:";
+  print_endline ("   Heap1:  " ^ (format_symb_heap sh3));
+  print_endline ("   Heap2:  " ^ (format_symb_heap sh4));
+  (*print_endline (String.concat " " ["  "; (format_symb_heap sh3); "◁ ▷"; (format_symb_heap sh4)]);*)
+  print_endline "\nRules applied:";
+  print_endline (format_fullbiabduction_result (full_biabduction ~verbose:true ruleSet1 sh3 sh4));
   print_endline "";
-  print_endline (format_fullbiabduction_result (full_biabduction ruleSet1 sh13 sh14));
-  print_endline "";
+
+  print_endline "\nExample 4.3:";
+  print_endline "\nInput:";
+  print_endline ("   Heap1:  " ^ (format_symb_heap sh5));
+  print_endline ("   Heap2:  " ^ (format_symb_heap sh6));
+  (*print_endline (String.concat " " ["  "; (format_symb_heap sh5); "◁ ▷"; (format_symb_heap sh6)]);*)
+  print_endline "\nRules applied:";
+  print_endline (format_fullbiabduction_result (full_biabduction ~verbose:true ruleSet1 sh5 sh6));
+  print_endline ""
 ;;
+
+(* ◁ ▷ *)

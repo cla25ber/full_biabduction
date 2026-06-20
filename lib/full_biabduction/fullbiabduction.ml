@@ -4,7 +4,7 @@ open Symbolic_heap.Formatting
 open Symbolic_heap.Utils
 open Rules
 
-(** The information gven by a Full Bi-Abduction step:
+(** The information given by a Full Bi-Abduction step:
     - [refinements1] : the refinements of the left-hand side heap found by the previous algorithm steps.
     - [antiframe] : the abduced information about the left-hand side heap.
     - [refinements2] : the refinements of the right-hand side heap found by the previous algorithm steps.
@@ -16,26 +16,40 @@ type full_biabduction_result = {
   frame : symb_heap
 }
 
-(** Formats the result of a Full BiAbduction application. *)
+(** Formats the result of a Full Bi-Abduction application. *)
 let format_fullbiabduction_result (result : full_biabduction_result option) =
   match result with
-    | None -> "Could not apply Full BiAbduction"
+    | None -> "Could not apply Full Bi-Abduction"
     | Some res ->
       String.concat "\n" [
-        "Left hand-side refinements: " ^ (format_refins res.refinements1);
-        "Antiframe: " ^ (format_symb_heap res.antiframe);
-        "Right hand-side refinements: " ^ (format_refins res.refinements2);
-        "Frame: " ^ (format_symb_heap res.frame)
+        "\nResult:";
+        "   Refinements1:  " ^ (format_refins res.refinements1);
+        "   Antiframe:     " ^ (format_symb_heap res.antiframe);
+        "   Refinements2:  " ^ (format_refins res.refinements2);
+        "   Frame:         " ^ (format_symb_heap res.frame)
       ]
 ;;
 
+(** Formats the result of a Full Bi-Abduction application with the form of the full bi-abductive question. *)
+(*let format_fullbiabduction_result_question (result : full_biabduction_result option) sh1 sh2 =
+  match result with
+    | None -> "Could not apply Full Bi-Abduction"
+    | Some res -> 
+      "\n" ^ (String.concat " " 
+        [(format_symb_heap sh1); "* ("; (format_refins res.refinements1); "⊢"; (format_symb_heap res.antiframe); ") ◁ ▷";
+        (format_symb_heap sh2); "* ("; (format_refins res.refinements2); "⊢"; (format_symb_heap res.frame); ")"])
+;;*)
+
 (** Takes a list of rules [rules] to be applied to symbolic heaps [sh1] and [sh2], returning their
     respective refinements, antiframe and frame in a [full_biabduction_result] struct. In case of 
-    unsuccessful Full BiAbduction, [None] is returned. *)
-let rec full_biabduction (rules:rule list) sh1 sh2 =
-  match apply_until_result rules sh1 sh2 0 with
+    unsuccessful Full BiAbduction, [None] is returned. 
+    
+    If the optional parameter [verbose] is set to true, the name of the executed rules will be printed. *)
+let rec full_biabduction ?(verbose:bool=false) (rules:rule list) sh1 sh2 =
+  match apply_until_result rules sh1 sh2 with
     | None -> None
     | Some res ->
+      (if (verbose) then (print_endline ("   " ^ res.name)));
       if (res.axiom) then
         let result = {
           refinements1 = res.refinements1;
@@ -44,7 +58,7 @@ let rec full_biabduction (rules:rule list) sh1 sh2 =
           frame = res.frame
         } in Some result
       else
-        let next_results = full_biabduction rules res.heap1 res.heap2 in
+        let next_results = full_biabduction ~verbose rules res.heap1 res.heap2 in
         match next_results with
           | None -> None
           | Some abduced_facts ->

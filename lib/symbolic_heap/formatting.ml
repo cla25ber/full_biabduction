@@ -1,4 +1,5 @@
 open Types
+open Utils
 
 (** A variable gets formatted according to its type:
     - [Pvar]: program variables gets formatted according to their name.
@@ -46,7 +47,7 @@ let format_pure_pred pure_preds =
   in
     match pure_preds with
       | [] -> "true"
-      | preds -> String.concat " & " (List.map format_atom preds)
+      | preds -> String.concat " ∧ " (List.map format_atom preds)
 ;;
 
 (** Pretty-prints a list of spatial predicates as a string, joined with [*]. *)
@@ -66,7 +67,7 @@ let format_spat_pred spat_preds =
 (** Pretty-prints a symbolic heap [sh] in the format:
     [∃(lvars).[pure_predicates | spatial_predicates]]. *)
 let format_symb_heap sh =
-  let heap = String.concat " " ["["; (format_pure_pred sh.pure); "|"; (format_spat_pred sh.spatial); "]"] in
+  let heap = String.concat " " ["["; (format_pure_pred (eliminate_repeated sh.pure)); "|"; (format_spat_pred sh.spatial); "]"] in
   if (sh.exists = []) then heap else
     let vars = String.concat "," (List.map (fun i -> "_v"^(string_of_int i)) sh.exists) in
     String.concat "" ["∃("; vars; ")."; heap]

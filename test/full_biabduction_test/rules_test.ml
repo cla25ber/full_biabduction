@@ -37,7 +37,8 @@ let test_base_emp _ =
     refinements2 = [];
     heap2 = empty_sh;
     frame = empty_sh;
-    axiom = true
+    axiom = true;
+    name = "base-emp"
   } in
 
   assert_rule_result_equal (Some result) (base_emp empty_sh empty_sh);
@@ -68,7 +69,8 @@ let test_remove _ =
     refinements2 = [];
     heap2 = empty_sh;
     frame = empty_sh;
-    axiom = false
+    axiom = false;
+    name = "removeL"
   } in
 
   assert_rule_result_equal None (removeL empty_sh sh1);
@@ -77,8 +79,8 @@ let test_remove _ =
   assert_rule_result_equal None (removeR sh1 true_sh); 
   assert_rule_result_equal (Some {result with heap1 = {sh1 with spatial = []}}) (removeL sh1 empty_sh);
   assert_rule_result_equal (Some {result with heap1 = {sh1 with spatial = []}; heap2 = sh2}) (removeL sh1 sh2); 
-  assert_rule_result_equal (Some {result with heap2 = {sh1 with spatial = []}}) (removeR empty_sh sh1);
-  assert_rule_result_equal (Some {result with heap2 = {sh1 with spatial = []}; heap1 = sh2}) (removeR sh2 sh1);
+  assert_rule_result_equal (Some {result with heap2 = {sh1 with spatial = []}; name = "removeR"}) (removeR empty_sh sh1);
+  assert_rule_result_equal (Some {result with heap2 = {sh1 with spatial = []}; heap1 = sh2; name = "removeR"}) (removeR sh2 sh1);
 ;;
 
 let test_match _ =
@@ -107,7 +109,8 @@ let test_match _ =
     refinements2 = [];
     heap2 = empty_sh;
     frame = empty_sh;
-    axiom = false
+    axiom = false;
+    name = "pointsto-match"
   } in
 
   assert_rule_result_equal None (freed_match empty_sh sh1);
@@ -122,7 +125,8 @@ let test_match _ =
                             ) (pt_match sh1 sh2);
   assert_rule_result_equal (Some {result with 
                                     heap1 = {sh1 with spatial = [PointsTo(x, k)]}; 
-                                    heap2 = {sh2 with spatial = [PointsTo(x, Int(5))]}}
+                                    heap2 = {sh2 with spatial = [PointsTo(x, Int(5))]};
+                                    name = "freed-match"}
                             ) (freed_match sh1 sh2); 
   assert_rule_result_equal (Some {result with 
                                     heap1 = {sh1 with spatial = [Freed(y)]; pure = Comp(Eq, k, Int(5)) :: sh1.pure}; 
@@ -162,7 +166,8 @@ let test_ls_start _ =
     refinements2 = [];
     heap2 = empty_sh;
     frame = empty_sh;
-    axiom = false
+    axiom = false;
+    name = "ls-startL"
   } in
 
   assert_rule_result_equal None (ls_startL empty_sh sh1);
@@ -176,7 +181,8 @@ let test_ls_start _ =
                                     antiframe = symbolic_heap_of_pure_preds [Comp(Neq, x, z)];
                                     frame = symbolic_heap_of_pure_preds [Comp(Neq, x, z)];
                                     refinements1 = [];
-                                    refinements2 = [PointsToP(x, Int(5))]}
+                                    refinements2 = [PointsToP(x, Int(5))];
+                                    name = "ls-startR"}
                             ) (ls_startR sh1 sh2);
   assert_rule_result_equal (Some {result with 
                                     heap2 = {sh1 with spatial = []; pure = Comp(Neq, x, z) :: sh1.pure}; 
@@ -200,7 +206,8 @@ let test_ls_start _ =
                                     antiframe = symbolic_heap_of_pure_preds [Comp(Neq, x, y)];
                                     frame = symbolic_heap_of_pure_preds [Comp(Neq, x, y)];
                                     refinements1 = [];
-                                    refinements2 = [PointsToP(x, Int(42))]}
+                                    refinements2 = [PointsToP(x, Int(42))];
+                                    name = "ls-startR"}
                             ) (ls_startR sh3 sh4);
 ;;
 
@@ -226,7 +233,8 @@ let test_ls_end _ =
     refinements2 = [];
     heap2 = empty_sh;
     frame = empty_sh;
-    axiom = false
+    axiom = false;
+    name = "ls-endL"
   } in
 
   assert_rule_result_equal None (ls_endL empty_sh sh1);
@@ -238,7 +246,8 @@ let test_ls_end _ =
                                     heap2 = {sh2 with spatial = [Freed(y)]}}
                             ) (ls_endL sh1 sh2);
   assert_rule_result_equal (Some {result with 
-                                    heap2 = {sh2 with spatial = [List(Int(5), z); Freed(y)]}}
+                                    heap2 = {sh2 with spatial = [List(Int(5), z); Freed(y)]};
+                                    name = "ls-endR"}
                             ) (ls_endR sh1 sh2);
 ;;
 
@@ -264,20 +273,22 @@ let test_missing _ =
     refinements2 = [];
     heap2 = empty_sh;
     frame = empty_sh;
-    axiom = false
+    axiom = false;
+    name = "missingL"
   } in
 
-  assert_rule_result_equal None (missingL empty_sh sh1);
-  assert_rule_result_equal None (missingR sh1 empty_sh);
+  assert_rule_result_equal None (missingR empty_sh sh1);
+  assert_rule_result_equal None (missingL sh1 empty_sh);
   assert_rule_result_equal (Some {result with
                                     heap2 = sh2;
-                                    frame = symbolic_heap_of_spatial_preds [PointsTo(x, Int(5))]}
-                            ) (missingL sh1 sh2);
+                                    frame = symbolic_heap_of_spatial_preds [PointsTo(x, Int(5))];
+                                    name = "missingR"}
+                            ) (missingR sh1 sh2);
   assert_rule_result_equal (Some {result with 
                                     heap1 = sh1;
                                     heap2 = {sh2 with spatial = [PointsTo(k, Int(5))]};
                                     antiframe = symbolic_heap_of_spatial_preds [Freed(y)]}
-                            ) (missingR sh1 sh2); 
+                            ) (missingL sh1 sh2); 
 ;;
 
 let suite =

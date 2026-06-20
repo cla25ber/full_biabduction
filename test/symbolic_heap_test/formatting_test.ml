@@ -35,7 +35,7 @@ let test_pure_format _ =
 
   assert_string_equal "true" (format_pure_pred []);
   assert_string_equal "true" (format_pure_pred [pp1]);
-  assert_string_equal "x≠_v1 & 2=_v0 & true" (format_pure_pred [pp3; pp2; pp1]);
+  assert_string_equal "x≠_v1 ∧ 2=_v0 ∧ true" (format_pure_pred [pp3; pp2; pp1]);
   assert_string_equal "x≠_v1" (format_pure_pred [pp3])
 ;;
 
@@ -94,7 +94,7 @@ let test_symb_heap_format _ =
   assert_string_equal "[ true | true ]" (format_symb_heap true_sh);
   assert_string_equal "[ 2=2 | x→5 ]" (format_symb_heap sh1);
   assert_string_equal "[ _v0≠2 | y↓ * x→5 ]" (format_symb_heap sh2);
-  assert_string_equal "∃(_v1).[ e=f & _v1≠42 | x→6 * e→5 * y→7 ]" (format_symb_heap sh3);
+  assert_string_equal "∃(_v1).[ e=f ∧ _v1≠42 | x→6 * e→5 * y→7 ]" (format_symb_heap sh3);
   assert_string_equal "[ 2=_v2 | w→5 * z→5 * ls(k,7) ]" (format_symb_heap sh4);
   assert_string_equal "∃(_v0,_v1).[ x≠_v1 | _v0→5 * f↓ ]" (format_symb_heap sh5)
 ;;
@@ -110,10 +110,3 @@ let suite =
 let () =
   run_test_tt_main suite
 ;;
-
-(*
-print_endline "\nTesting symbolic heaps unions";;
-print_endline ("sh1 + sh2 = "^(format_symb_heap (merge_symb_heap sh1 sh2)));;
-print_endline ("sh3 + sh5 = "^(format_symb_heap (merge_symb_heap sh3 sh5)));;
-print_endline ("sh4 + sh6 = "^(format_symb_heap (merge_symb_heap sh4 sh6)));;
-*)
