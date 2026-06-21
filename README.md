@@ -1,6 +1,6 @@
 # Full Bi-Abduction Prototype
 
-This repository contains a reference implementation of the full bi-abduction algorithm for symbolic heap separation logic described in Compositional backward shape analysis by means of bi-abduction.
+This repository contains a reference implementation of the full bi-abduction algorithm for symbolic heap, described in Compositional backward shape analysis by means of bi-abduction.
 
 ## Structure of the project
 
