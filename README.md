@@ -30,7 +30,7 @@ The Ocaml compilar, along with its standard build utilities, are required.
 - OPAM: Package Manager
 - Dune: 3.23.0 (or higher)
 
-###Running the example
+### Running the example
 ```bash
 dune exec main.exe
 ```
