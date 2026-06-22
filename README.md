@@ -7,7 +7,7 @@ This repository contains a reference implementation of the full bi-abduction alg
 The project is composed of two main modules:
 
 ### `symbolic_heap`
-The former defines all the necessary operations to work with symbolic heaps; it is composed of the following files:
+Defines all the necessary operations to work with symbolic heaps.
 - **types**: defines the structure of symbolic heaps.
 - **substitution**: provides all the operations regarding variables and their substitution.
 - **symb_heap_ops**: provides all the useful operations to work with symbolic heaps.
@@ -24,15 +24,44 @@ The examples presented throughout the paper can be found in the **main** file.
 
 ## Prerequisites
 
-The Ocaml compilar, along with its standard build utilities, are required.
+The Ocaml compiler, along with its standard build utilities, are required.
 
 - OCaml: 4.14.1 (or higher)
 - OPAM: Package Manager
 - Dune: 3.23.0 (or higher)
 
+## Installation
+
+First, clone the repository:
+```bash
+git clone https://github.com/cla25ber/full_biabduction.git
+cd full_biabduction
+```
+
+Then, it is recommended to create a local sandbox to avoid conflicts with the global environment:
+```bash
+opam switch create . 4.14.1
+eval $(opam env)
+```
+
+Using OPAM, it is possible to install automatically all the required project libraries:
+```bash
+opam install . --deps-only
+```
+
+### Compilation
+```bash
+dune build
+```
+
 ### Running the example
 ```bash
 dune exec main.exe
+```
+
+### Testing
+```bash
+dune test
 ```
 
 ## Citation
