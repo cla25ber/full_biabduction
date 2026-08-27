@@ -54,9 +54,9 @@ opam install . --deps-only
 dune build
 ```
 
-### Running the example
+### Running the examples
 ```bash
-dune exec main.exe
+dune exec main
 ```
 
 ### Testing

@@ -1,4 +1,9 @@
 (executable
- (public_name biabduction)
+ (public_name main)
  (name main)
+ (libraries symbolic_heap full_biabduction))
+
+ (executable
+ (public_name random_experiment)
+ (name random_experiment)
  (libraries symbolic_heap full_biabduction))
