@@ -62,3 +62,13 @@ let rec apply_until_result fun_list param1 param2 =
         | None -> apply_until_result rem_rules param1 param2
     )
 ;;
+
+(** Adds each option element of the tuple [(a, b)] respectively to each list of the list tuple [(l1, l2)] if present,
+    otherwise keeps the lists as they are. *)
+let cons_option_tuple (a, b) (l1, l2) =
+  match (a, b) with
+    | (Some a', Some b') -> (a'::l1, b'::l2)
+    | (Some a', None) -> (a'::l1, l2)
+    | (None, Some b') -> (l1, b'::l2)
+    | (None, None) -> (l1, l2)
+;;

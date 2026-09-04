@@ -4,6 +4,11 @@
  (libraries symbolic_heap full_biabduction))
 
  (executable
- (public_name random_experiment)
- (name random_experiment)
- (libraries symbolic_heap full_biabduction))
+ (public_name random1)
+ (name random_experiment1)
+ (libraries symbolic_heap full_biabduction unix))
+
+ (executable
+ (public_name random2)
+ (name random_experiment2)
+ (libraries symbolic_heap full_biabduction unix))
