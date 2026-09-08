@@ -10,6 +10,7 @@ _build/
 
 # opam files
 .opam-switch/
+_opam/
 
 # editor files
 *.swp
