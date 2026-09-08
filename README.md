@@ -47,7 +47,7 @@ eval $(opam env)
 
 Using OPAM, it is possible to install automatically all the required project libraries:
 ```bash
-opam install . --deps-only
+opam install . --deps-only --with-test
 ```
 
 ### Compilation
