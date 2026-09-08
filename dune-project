@@ -16,7 +16,7 @@
 (documentation https://url/to/documentation)
 
 (package
- (name biabduction)
+ (name full_biabduction)
  (synopsis "A short synopsis")
  (description "A longer description")
  (depends ocaml)
