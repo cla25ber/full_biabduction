@@ -41,7 +41,7 @@ cd full_biabduction
 
 Then, it is recommended to create a local sandbox to avoid conflicts with the global environment:
 ```bash
-opam switch create . 4.14.1
+opam switch create . 4.14.1 --no-install
 eval $(opam env)
 ```
 
