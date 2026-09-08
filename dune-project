@@ -5,22 +5,22 @@
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github cla25ber/full_biabduction))
 
-(authors "Author Name <author@example.com>")
+(authors "Claudio Bernardoni cla.bernardoni25@gmail.com")
 
-(maintainers "Maintainer Name <maintainer@example.com>")
+(maintainers "Claudio Bernardoni cla.bernardoni25@gmail.com")
 
-(license LICENSE)
-
-(documentation https://url/to/documentation)
+(license MIT)
 
 (package
  (name full_biabduction)
- (synopsis "A short synopsis")
- (description "A longer description")
- (depends ocaml)
+ (synopsis "Reference implementation of full bi-abduction for symbolic heaps")
+ (description "A prototype implementation of the full bi-abduction procedure for symbolic heaps.")
+ (depends 
+   ocaml
+   (ounit2 :with-test))
  (tags
-  ("add topics" "to describe" your project)))
+  ("Separation logic" "Bi-abduction")))
 
 ; See the complete stanza docs at https://dune.readthedocs.io/en/stable/reference/dune-project/index.html
