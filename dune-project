@@ -1,6 +1,6 @@
 (lang dune 3.23)
 
-(name biabduction)
+(name full_biabduction)
 
 (generate_opam_files true)
 
