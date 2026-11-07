@@ -115,4 +115,23 @@ dune test
 ## Citation
 
 If you use this software in academic work, please cite:
-*Yet to be published*
+> Claudio Bernardoni, Roberto Bruni, Lorenzo Gazzella, and Roberta Gori. **Compositional backward shape analysis by means of bi-abduction**. *Journal of Logical and Algebraic Methods in Programming*, Vol. 152, 101187, 2027. DOI: [10.1016/j.jlamp.2026.101187](https://doi.org/10.1016/j.jlamp.2026.101187)
+
+```bibtex
+@article{DBLP:journals/jlap/BernardoniBGG27,
+  author       = {Claudio Bernardoni and
+                  Roberto Bruni and
+                  Lorenzo Gazzella and
+                  Roberta Gori},
+  title        = {Compositional backward shape analysis by means of bi-abduction},
+  journal      = {J. Log. Algebraic Methods Program.},
+  volume       = {152},
+  pages        = {101187},
+  year         = {2027},
+  url          = {https://doi.org/10.1016/j.jlamp.2026.101187},
+  doi          = {10.1016/J.JLAMP.2026.101187},
+  timestamp    = {Mon, 26 Oct 2026 09:17:20 +0100},
+  biburl       = {https://dblp.org/rec/journals/jlap/BernardoniBGG27.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+```
